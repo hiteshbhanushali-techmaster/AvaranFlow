@@ -46,12 +46,15 @@ jobs:
         with:
           user: HiteshBhanushali-Techmaster
 
-      - name: Publish packages
+      - name: Publish NuGet packages and symbols
         env:
           NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY || secrets.NUGET_API_KEY }}
-        run: dotnet nuget push "artifacts/AvaranFlow.*.nupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
-
-      - name: Publish symbols
-        env:
-          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY || secrets.NUGET_API_KEY }}
-        run: dotnet nuget push "artifacts/AvaranFlow.*.snupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: |
+          Get-ChildItem -Path artifacts -Filter "*.nupkg" | ForEach-Object {
+            Write-Host "Publishing package $($_.Name)..."
+            dotnet nuget push $_.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
+          Get-ChildItem -Path artifacts -Filter "*.snupkg" | ForEach-Object {
+            Write-Host "Publishing symbols $($_.Name)..."
+            dotnet nuget push $_.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
