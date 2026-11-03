@@ -9,7 +9,7 @@ When no prior `Configure()` call is performed, calling `ExceptionMaster.Log(ex)`
 - No external files or databases required.
 
 ```csharp
-using ExceptionMaster.Core;
+using AvaranFlow.Core;
 
 // Zero setup required
 ExceptionMaster.Log(ex);
@@ -22,8 +22,8 @@ ExceptionMaster.Log(ex);
 ### Scenario A: File Logging with Size-Based Rotation
 
 ```csharp
-using ExceptionMaster.Core;
-using ExceptionMaster.Sinks.File;
+using AvaranFlow.Core;
+using AvaranFlow.Sinks.File;
 
 ExceptionMaster.Configure(options =>
 {
@@ -44,10 +44,10 @@ ExceptionMaster.Configure(options =>
 ### Scenario B: Database Logging with File and Console Fallback
 
 ```csharp
-using ExceptionMaster.Core;
-using ExceptionMaster.Sinks.Database;
-using ExceptionMaster.Sinks.File;
-using ExceptionMaster.Sinks.Console;
+using AvaranFlow.Core;
+using AvaranFlow.Sinks.Database;
+using AvaranFlow.Sinks.File;
+using AvaranFlow.Sinks.Console;
 
 ExceptionMaster.Configure(options =>
 {
@@ -84,8 +84,8 @@ ExceptionMaster.Configure(options =>
 ### Scenario D: Existing NLog Integration
 
 ```csharp
-using ExceptionMaster.Core;
-using ExceptionMaster.Sinks.NLog;
+using AvaranFlow.Core;
+using AvaranFlow.NLog;
 
 ExceptionMaster.Configure(options =>
 {

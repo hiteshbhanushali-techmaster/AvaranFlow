@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ExceptionMaster.Core\ExceptionMaster.Core.csproj" />
-    <ProjectReference Include="..\..\src\ExceptionMaster.Alerting.Core\ExceptionMaster.Alerting.Core.csproj" />
+    <ProjectReference Include="..\..\src\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+    <ProjectReference Include="..\..\src\AvaranFlow.Alerting.Core\AvaranFlow.Alerting.Core.csproj" />
   </ItemGroup>
 </Project>

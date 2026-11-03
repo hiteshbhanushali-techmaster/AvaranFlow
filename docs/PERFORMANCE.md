@@ -6,7 +6,7 @@ The phrase "Zero-Lock Hot Path" is an oversimplification. ExceptionMaster is eng
 
 ### What Is Atomic & Lock-Free
 - **In-Memory Aggregate State Replacement**:
-  Updates to existing aggregation entries use atomic Compare-And-Swap (`Interlocked.CompareExchange`) on an immutable `AggregateState` snapshot inside [`AggregateEntry`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/AggregateState.cs). Multiple threads logging the same exception key update counts (`OccurrenceCount`, `LastSeenUtc`, `IsFatal`) without acquiring thread locks.
+  Updates to existing aggregation entries use atomic Compare-And-Swap (`Interlocked.CompareExchange`) on an immutable `AggregateState` snapshot inside [`AggregateEntry`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/AggregateState.cs). Multiple threads logging the same exception key update counts (`OccurrenceCount`, `LastSeenUtc`, `IsFatal`) without acquiring thread locks.
 - **Aggregation Key Cache**:
   Key lookups utilize `ConcurrentDictionary<string, AggregateEntry>`, which uses fine-grained internal bucket locking only on new key insertions, remaining lock-free for reads and existing key updates.
 - **Reentrancy Protection**:

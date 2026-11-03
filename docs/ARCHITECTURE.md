@@ -7,7 +7,7 @@
 The fundamental design imperative of ExceptionMaster is **absolute failure containment**: under no circumstance will any failure in the logging pipeline—including database outages, disk saturation, missing directories, serialization faults, or malfunctioning event subscribers—propagate back as an exception to the calling application.
 
 ### Key Capabilities
-1. **Core Zero-Dependency Runtime**: `ExceptionMaster.Core` contains zero external dependencies (no NLog, no third-party libraries).
+1. **Core Zero-Dependency Runtime**: `AvaranFlow.Core` contains zero external dependencies (no NLog, no third-party libraries).
 2. **Deterministic Fallback Routing**: Fallback pipelines (e.g., Database → File → Console) ensure critical diagnostic telemetry is preserved when primary sinks fail.
 3. **Multi-Sink Fan-Out**: Dispatch exceptions to multiple independent destinations concurrently without cross-sink failure coupling.
 4. **Thread-Safe Deduplication & Periodic Aggregation**: In-memory aggregation consolidates repeated exceptions within configurable time windows, tracking `FirstSeenUtc`, `LastSeenUtc`, deterministic `WindowStartUtc`, and atomic `Count`. Periodic flushes emit aggregate summaries to sinks without lost counts.
@@ -75,11 +75,11 @@ The fundamental design imperative of ExceptionMaster is **absolute failure conta
 
 | Project | Responsibility | Dependencies | Target Frameworks |
 | :--- | :--- | :--- | :--- |
-| **`ExceptionMaster.Core`** | Public API, metadata capture, aggregation engine, dispatch pipeline, buffering, sink contracts, lifecycle management. | None | `net461;netstandard2.0` |
-| **`ExceptionMaster.Sinks.Console`** | Console rendering with optional color formatting and safe output stream disconnection handling. | `ExceptionMaster.Core` | `net461;netstandard2.0` |
-| **`ExceptionMaster.Sinks.File`** | Rolling file persistence with size-based rotation, retention limits, and file share isolation. | `ExceptionMaster.Core` | `net461;netstandard2.0` |
-| **`ExceptionMaster.Sinks.Database`** | Parameterized SQL Server persistence with batch upsert, deterministic windowing, and timeout bounds. | `ExceptionMaster.Core` | `net461;netstandard2.0` |
-| **`ExceptionMaster.Sinks.NLog`** | Optional adapter relaying `ExceptionContext` to host NLog targets without altering host configuration. | `ExceptionMaster.Core`, `NLog (>= 4.7.15)` | `net461;netstandard2.0` |
+| **`AvaranFlow.Core`** | Public API, metadata capture, aggregation engine, dispatch pipeline, buffering, sink contracts, lifecycle management. | None | `net461;netstandard2.0` |
+| **`AvaranFlow.Sinks.Console`** | Console rendering with optional color formatting and safe output stream disconnection handling. | `AvaranFlow.Core` | `net461;netstandard2.0` |
+| **`AvaranFlow.Sinks.File`** | Rolling file persistence with size-based rotation, retention limits, and file share isolation. | `AvaranFlow.Core` | `net461;netstandard2.0` |
+| **`AvaranFlow.Sinks.Database`** | Parameterized SQL Server persistence with batch upsert, deterministic windowing, and timeout bounds. | `AvaranFlow.Core` | `net461;netstandard2.0` |
+| **`AvaranFlow.NLog`** | Optional adapter relaying `ExceptionContext` to host NLog targets without altering host configuration. | `AvaranFlow.Core`, `NLog (>= 4.7.15)` | `net461;netstandard2.0` |
 
 ---
 
@@ -188,7 +188,7 @@ public interface IExceptionSink : IDisposable
 
 ## 8. Lifecycle & Durability Guarantees
 
-1. `Configure(Action<ExceptionMasterOptions> configure)` applies atomic configuration transitions while preserving subscriber registrations.
+1. `Configure(Action<AvaranFlowOptions> configure)` applies atomic configuration transitions while preserving subscriber registrations.
 2. `Flush(TimeSpan timeout)` drains queue items, waits for active in-flight writes to finish, and flushes pending aggregation summaries.
 3. `Shutdown(TimeSpan timeout)` drains all pending queue items and aggregation summaries, stops worker tasks, and disposes library-managed sinks.
 4. **Durability Limits**: In-memory queues and aggregation deltas reside in volatile process RAM. Durability across abrupt process termination (`Process.Kill()`, power failure) is not claimed; persistent storage occurs upon successful sink write.

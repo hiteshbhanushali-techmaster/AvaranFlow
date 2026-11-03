@@ -2,11 +2,11 @@
 
 ## 1. Test Project Structure
 
-1. **`ExceptionMaster.Core.Tests`**: Unit tests for API, metadata snapshotting, aggregation, buffer overflow, and lifecycle.
-2. **`ExceptionMaster.Sinks.Tests`**: Unit and component tests for Console, File, Database, and NLog sinks.
-3. **`ExceptionMaster.Concurrency.Tests`**: Parallel logging, multi-threaded aggregation accuracy, concurrent reconfiguration, and atomic counters under load.
-4. **`ExceptionMaster.FailureInjection.Tests`**: Throwing sinks, database disconnects, locked files, full disks, slow subscribers, and cyclic event recursion.
-5. **`ExceptionMaster.Integration.Tests`**: End-to-end multi-sink routing, database schema deployment, LocalDB verification, and consumer package tests.
+1. **`AvaranFlow.Core.Tests`**: Unit tests for API, metadata snapshotting, aggregation, buffer overflow, and lifecycle.
+2. **`AvaranFlow.Sinks.Tests`**: Unit and component tests for Console, File, Database, and NLog sinks.
+3. **`AvaranFlow.Concurrency.Tests`**: Parallel logging, multi-threaded aggregation accuracy, concurrent reconfiguration, and atomic counters under load.
+4. **`AvaranFlow.FailureInjection.Tests`**: Throwing sinks, database disconnects, locked files, full disks, slow subscribers, and cyclic event recursion.
+5. **`AvaranFlow.Integration.Tests`**: End-to-end multi-sink routing, database schema deployment, LocalDB verification, and consumer package tests.
 
 ---
 

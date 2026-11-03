@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <RootNamespace>AvaranFlow.Sinks.File</RootNamespace>
+    <AssemblyName>AvaranFlow.Sinks.File</AssemblyName>
+    <PackageId>AvaranFlow.Sinks.File</PackageId>
+    <Title>AvaranFlow.Sinks.File</Title>
+    <Description>Size-rotated, resilient file sink for AvaranFlow with archive retention management.</Description>
+    <PackageTags>avaranflow;exception;logging;file;sink;rolling</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+  </ItemGroup>
+</Project>

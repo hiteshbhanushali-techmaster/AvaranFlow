@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net461;net8.0</TargetFrameworks>
+    <RootNamespace>AvaranFlow.Sample.ClassicConsole</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+    <ProjectReference Include="..\..\src\AvaranFlow.Sinks.Console\AvaranFlow.Sinks.Console.csproj" />
+    <ProjectReference Include="..\..\src\AvaranFlow.Sinks.File\AvaranFlow.Sinks.File.csproj" />
+  </ItemGroup>
+</Project>

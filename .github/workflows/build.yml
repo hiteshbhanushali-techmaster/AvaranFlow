@@ -28,16 +28,16 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ExceptionMaster.sln
+        run: dotnet restore AvaranFlow.sln
 
       - name: Build solution (Release)
-        run: dotnet build ExceptionMaster.sln --configuration Release --no-restore
+        run: dotnet build AvaranFlow.sln --configuration Release --no-restore
 
       - name: Run automated test suites
-        run: dotnet test ExceptionMaster.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test AvaranFlow.sln --configuration Release --no-build --verbosity normal
 
       - name: Build NuGet packages
-        run: dotnet pack ExceptionMaster.sln --configuration Release --no-build --output artifacts
+        run: dotnet pack AvaranFlow.sln --configuration Release --no-build --output artifacts
 
       - name: Exchange GitHub OIDC token for NuGet key
         uses: NuGet/login@v1

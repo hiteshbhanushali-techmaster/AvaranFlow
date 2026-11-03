@@ -24,7 +24,7 @@ ExceptionMaster completely eliminates these failure modes through **strict failu
 - **Emergency Diagnostic Channel**: In the rare event of catastrophic downstream destination failures, an isolated non-recursive standard error channel logs diagnostics without re-entering the pipeline.
 
 ### 2.2. Zero Third-Party Dependencies in Core
-- `ExceptionMaster.Core` has **0 external third-party NuGet dependencies**.
+- `AvaranFlow.Core` has **0 external third-party NuGet dependencies**.
 - It requires **no NLog**, **no external configuration files** (`nlog.config`, `log4net.config`), and **no active database** to function safely.
 - Calling `ExceptionMaster.Log(ex)` with zero prior configuration automatically initializes Safe Defaults (in-memory aggregation, bounded async buffer, and safe console fallback).
 
@@ -61,17 +61,17 @@ The solution contains **13 distinct projects** organized into a clean Visual Stu
 ```
 ExceptionMaster/
 ├── src/                                   # Production libraries
-│   ├── ExceptionMaster.Core               # Core framework engine & public APIs
-│   ├── ExceptionMaster.Sinks.Console      # Safe console output sink
-│   ├── ExceptionMaster.Sinks.File         # Size-rotated rolling file sink
-│   ├── ExceptionMaster.Sinks.Database     # Parameterized SQL Server database sink
-│   └── ExceptionMaster.Sinks.NLog         # Optional non-invasive NLog adapter
+│   ├── AvaranFlow.Core               # Core framework engine & public APIs
+│   ├── AvaranFlow.Sinks.Console      # Safe console output sink
+│   ├── AvaranFlow.Sinks.File         # Size-rotated rolling file sink
+│   ├── AvaranFlow.Sinks.Database     # Parameterized SQL Server database sink
+│   └── AvaranFlow.NLog         # Optional non-invasive NLog adapter
 ├── tests/                                 # Automated test suites (net8.0 & net48)
-│   ├── ExceptionMaster.Core.Tests         # Metadata, defaults, buffer & lifecycle tests
-│   ├── ExceptionMaster.Sinks.Tests        # Console, File, and NLog sink tests
-│   ├── ExceptionMaster.Concurrency.Tests  # Atomic counters, parallel stress & benchmarks
-│   ├── ExceptionMaster.FailureInjection.Tests # Fault injection, fallback & recursion tests
-│   └── ExceptionMaster.Integration.Tests  # Multi-sink fan-out & offline DB fallback tests
+│   ├── AvaranFlow.Core.Tests         # Metadata, defaults, buffer & lifecycle tests
+│   ├── AvaranFlow.Sinks.Tests        # Console, File, and NLog sink tests
+│   ├── AvaranFlow.Concurrency.Tests  # Atomic counters, parallel stress & benchmarks
+│   ├── AvaranFlow.FailureInjection.Tests # Fault injection, fallback & recursion tests
+│   └── AvaranFlow.Integration.Tests  # Multi-sink fan-out & offline DB fallback tests
 └── samples/                               # Executable consumer samples
     ├── ExceptionMaster.Sample.ClassicConsole # Console application sample
     ├── ExceptionMaster.Sample.WinForms    # Windows Forms GUI application sample
@@ -82,47 +82,47 @@ ExceptionMaster/
 
 ## 4. Implemented Component Details
 
-### 4.1. `ExceptionMaster.Core`
-- **[`ExceptionContext`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/ExceptionContext.cs)**: Immutable snapshot containing 20+ diagnostic fields:
+### 4.1. `AvaranFlow.Core`
+- **[`ExceptionContext`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/ExceptionContext.cs)**: Immutable snapshot containing 20+ diagnostic fields:
   `Exception`, `Message`, `ExceptionType`, `StackTrace`, `FirstSeenUtc`, `LastSeenUtc`, `Count`, `Caller`, `Category`, `MachineName`, `ProcessName`, `ProcessId`, `ThreadId`, `AppVersion`, `CorrelationId`, `IsFatal`, `ExceptionKey`, `EnvironmentName`, `Source`, `InnerExceptionDetails`, `OccurrenceId`, and `SchemaVersion`.
-- **[`AggregationEngine`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/AggregationEngine.cs)**:
+- **[`AggregationEngine`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/AggregationEngine.cs)**:
   - Generates normalized aggregation keys by parsing exception type, top stack frame, and stripping dynamic content (GUIDs, hex pointers).
   - Maintains a bounded cache (`MaxAggregationEntries`) with automated sliding-window eviction to prevent memory bloat during exception storms.
-- **[`AggregateEntry`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/AggregateState.cs)**:
+- **[`AggregateEntry`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/AggregateState.cs)**:
   - Atomic multi-field state transitions (`AggregateSnapshot`) via compare-and-swap spin loops.
   - Guarantees coherent snapshots of `(Count, FirstSeenUtc, LastSeenUtc, IsFatal)` under extreme multi-threaded concurrency.
-- **[`DispatchPipeline`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/DispatchPipeline.cs)**:
+- **[`DispatchPipeline`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/DispatchPipeline.cs)**:
   - Bounded memory queue with configurable overflow policies: `DropNewest`, `DropOldest`, and `BlockWithTimeout`.
   - Fatal event bypass guarantee: critical errors (`IsFatal == true`) are prioritized.
   - Background worker batching with timer-driven periodic flushing and shutdown drain bounds.
-- **[`EventBroadcaster`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/EventBroadcaster.cs)**:
+- **[`EventBroadcaster`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/EventBroadcaster.cs)**:
   - Manages asynchronous subscriber dispatch.
   - Uses `AsyncLocal<bool>` execution-context isolation to detect reentrancy without blocking concurrent worker threads.
-- **[`MetadataExtractor`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Core/MetadataExtractor.cs)**:
+- **[`MetadataExtractor`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Core/MetadataExtractor.cs)**:
   - Efficiently extracts environment metadata.
   - Recursively formats nested and flattened `AggregateException` trees up to 10 depth levels.
 
-### 4.2. `ExceptionMaster.Sinks.Console`
-- Implements `IExceptionSink` in [`ConsoleSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.Console/ConsoleSink.cs).
+### 4.2. `AvaranFlow.Sinks.Console`
+- Implements `IExceptionSink` in [`ConsoleSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Sinks.Console/ConsoleSink.cs).
 - Color-coded severity output (DarkRed for fatal, Red for errors, Yellow for inner exceptions, DarkGray for stack traces).
 - Handles disconnected output streams and headless GUI/service environments without throwing.
 
-### 4.3. `ExceptionMaster.Sinks.File`
-- Implements `IExceptionSink` in [`FileSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.File/FileSink.cs).
+### 4.3. `AvaranFlow.Sinks.File`
+- Implements `IExceptionSink` in [`FileSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Sinks.File/FileSink.cs).
 - Automated size-based rolling rotation (`MaxFileSizeBytes`, default 10MB).
 - Strict archive retention (`MaxArchiveFiles`, default 10) deleting oldest archives automatically.
 - Multi-threaded file lock retry loop (3 attempts with exponential backoff).
 - Complete error isolation against full disks or read-only directories.
 
-### 4.4. `ExceptionMaster.Sinks.Database`
-- Implements `IExceptionSink` in [`SqlServerDatabaseSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.Database/SqlServerDatabaseSink.cs).
+### 4.4. `AvaranFlow.Sinks.Database`
+- Implements `IExceptionSink` in [`SqlServerDatabaseSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Sinks.Database/SqlServerDatabaseSink.cs).
 - Parameterized SQL commands preventing SQL injection.
 - Concurrency-safe atomic `MERGE` statement: updates `OccurrenceCount = OccurrenceCount + @BatchCount` and `LastSeenUtc` for matching keys within active time windows.
 - Idempotent schema initialization creating `ExceptionMasterLogs` table and composite indexes.
 - Automatic transient retry recovery and coordination with fallback chains.
 
-### 4.5. `ExceptionMaster.Sinks.NLog`
-- Implements `IExceptionSink` in [`NLogSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.NLog/NLogSink.cs).
+### 4.5. `AvaranFlow.NLog`
+- Implements `IExceptionSink` in [`NLogSink.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.NLog/NLogSink.cs).
 - Forwards `ExceptionContext` to existing host NLog targets via `LogEventInfo`.
 - **Non-Invasive**: Does not install `NLog.config`, does not alter targets, and never calls `LogManager.Shutdown()` on the host logger.
 
@@ -133,30 +133,30 @@ ExceptionMaster/
 All test suites were executed across **both .NET 8 and .NET Framework 4.8** using the test execution command:
 
 ```bash
-dotnet test ExceptionMaster.sln
+dotnet test AvaranFlow.sln
 ```
 
 ### Complete Test Execution Results
 
 | Test Project | Framework | Tests Run | Passed | Failed | Duration |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **ExceptionMaster.Core.Tests** | .NET 8.0 | 13 | 13 | 0 | 27 ms |
-| **ExceptionMaster.Core.Tests** | .NETFramework 4.8 | 13 | 13 | 0 | 96 ms |
-| **ExceptionMaster.Sinks.Tests** | .NET 8.0 | 3 | 3 | 0 | 132 ms |
-| **ExceptionMaster.Sinks.Tests** | .NETFramework 4.8 | 3 | 3 | 0 | 266 ms |
-| **ExceptionMaster.Concurrency.Tests** | .NET 8.0 | 4 | 4 | 0 | 4.0 s |
-| **ExceptionMaster.Concurrency.Tests** | .NETFramework 4.8 | 4 | 4 | 0 | 5.0 s |
-| **ExceptionMaster.FailureInjection.Tests**| .NET 8.0 | 5 | 5 | 0 | 222 ms |
-| **ExceptionMaster.FailureInjection.Tests**| .NETFramework 4.8 | 5 | 5 | 0 | 238 ms |
-| **ExceptionMaster.Integration.Tests** | .NET 8.0 | 2 | 2 | 0 | 30 ms |
-| **ExceptionMaster.Integration.Tests** | .NETFramework 4.8 | 2 | 2 | 0 | 4 ms |
+| **AvaranFlow.Core.Tests** | .NET 8.0 | 13 | 13 | 0 | 27 ms |
+| **AvaranFlow.Core.Tests** | .NETFramework 4.8 | 13 | 13 | 0 | 96 ms |
+| **AvaranFlow.Sinks.Tests** | .NET 8.0 | 3 | 3 | 0 | 132 ms |
+| **AvaranFlow.Sinks.Tests** | .NETFramework 4.8 | 3 | 3 | 0 | 266 ms |
+| **AvaranFlow.Concurrency.Tests** | .NET 8.0 | 4 | 4 | 0 | 4.0 s |
+| **AvaranFlow.Concurrency.Tests** | .NETFramework 4.8 | 4 | 4 | 0 | 5.0 s |
+| **AvaranFlow.FailureInjection.Tests**| .NET 8.0 | 5 | 5 | 0 | 222 ms |
+| **AvaranFlow.FailureInjection.Tests**| .NETFramework 4.8 | 5 | 5 | 0 | 238 ms |
+| **AvaranFlow.Integration.Tests** | .NET 8.0 | 2 | 2 | 0 | 30 ms |
+| **AvaranFlow.Integration.Tests** | .NETFramework 4.8 | 2 | 2 | 0 | 4 ms |
 | **TOTAL** | **Dual Targets** | **54** | **54** | **0** | **100% Passed** |
 
 ---
 
 ## 6. Performance Benchmarks
 
-Measured via [`tests/ExceptionMaster.Concurrency.Tests/StressAndBenchmarkTests.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/tests/ExceptionMaster.Concurrency.Tests/StressAndBenchmarkTests.cs):
+Measured via [`tests/AvaranFlow.Concurrency.Tests/StressAndBenchmarkTests.cs`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/tests/AvaranFlow.Concurrency.Tests/StressAndBenchmarkTests.cs):
 
 | Metric | Measured Value | Standard / Requirement | Status |
 | :--- | :--- | :--- | :---: |
@@ -174,11 +174,11 @@ All packages were packaged in `Release` configuration with XML documentation and
 
 | Package File | Size | Target Frameworks | Contents |
 | :--- | :---: | :--- | :--- |
-| **`ExceptionMaster.Core.1.0.0.nupkg`** | ~48 KB | `net461`, `netstandard2.0` | Core engine, aggregation, dispatch, context, interfaces |
-| **`ExceptionMaster.Sinks.Console.1.0.0.nupkg`** | ~18 KB | `net461`, `netstandard2.0` | Console sink with headless & color handling |
-| **`ExceptionMaster.Sinks.File.1.0.0.nupkg`** | ~22 KB | `net461`, `netstandard2.0` | Size-rotated rolling file sink with retention |
-| **`ExceptionMaster.Sinks.Database.1.0.0.nupkg`** | ~24 KB | `net461`, `netstandard2.0` | SQL Server database sink with merge upsert |
-| **`ExceptionMaster.Sinks.NLog.1.0.0.nupkg`** | ~18 KB | `net461`, `netstandard2.0` | Isolated NLog sink adapter |
+| **`AvaranFlow.Core.1.0.0.nupkg`** | ~48 KB | `net461`, `netstandard2.0` | Core engine, aggregation, dispatch, context, interfaces |
+| **`AvaranFlow.Sinks.Console.1.0.0.nupkg`** | ~18 KB | `net461`, `netstandard2.0` | Console sink with headless & color handling |
+| **`AvaranFlow.Sinks.File.1.0.0.nupkg`** | ~22 KB | `net461`, `netstandard2.0` | Size-rotated rolling file sink with retention |
+| **`AvaranFlow.Sinks.Database.1.0.0.nupkg`** | ~24 KB | `net461`, `netstandard2.0` | SQL Server database sink with merge upsert |
+| **`AvaranFlow.NLog.1.0.0.nupkg`** | ~18 KB | `net461`, `netstandard2.0` | Isolated NLog sink adapter |
 
 ---
 

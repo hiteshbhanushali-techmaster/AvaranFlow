@@ -99,12 +99,12 @@ flowchart TD
 
 | Package | Assembly | Target Frameworks | Compatibility |
 |---|---|---|---|
-| `AvaranFlow.Core` | `ExceptionMaster.Core.dll` | `net461`, `netstandard2.0` | .NET Core 2.0+, .NET 5/6/7/8/9+, .NET Framework 4.6.1+ |
-| `AvaranFlow.Alerting.Core` | `ExceptionMaster.Alerting.Core.dll` | `netstandard2.0`, `net8.0` | .NET 8.0+, .NET Framework 4.8+, .NET Standard 2.0 |
-| `AvaranFlow.Sinks.Console` | `ExceptionMaster.Sinks.Console.dll` | `net461`, `netstandard2.0` | All supported .NET runtimes |
-| `AvaranFlow.Sinks.File` | `ExceptionMaster.Sinks.File.dll` | `net461`, `netstandard2.0` | All supported .NET runtimes |
-| `AvaranFlow.Sinks.Database` | `ExceptionMaster.Sinks.Database.dll` | `net461`, `netstandard2.0` | Microsoft SQL Server / Azure SQL |
-| `AvaranFlow.NLog` | `ExceptionMaster.Sinks.NLog.dll` | `net461`, `netstandard2.0` | NLog 4.7.15+ integrations |
+| `AvaranFlow.Core` | `AvaranFlow.Core.dll` | `net461`, `netstandard2.0` | .NET Core 2.0+, .NET 5/6/7/8/9+, .NET Framework 4.6.1+ |
+| `AvaranFlow.Alerting.Core` | `AvaranFlow.Alerting.Core.dll` | `netstandard2.0`, `net8.0` | .NET 8.0+, .NET Framework 4.8+, .NET Standard 2.0 |
+| `AvaranFlow.Sinks.Console` | `AvaranFlow.Sinks.Console.dll` | `net461`, `netstandard2.0` | All supported .NET runtimes |
+| `AvaranFlow.Sinks.File` | `AvaranFlow.Sinks.File.dll` | `net461`, `netstandard2.0` | All supported .NET runtimes |
+| `AvaranFlow.Sinks.Database` | `AvaranFlow.Sinks.Database.dll` | `net461`, `netstandard2.0` | Microsoft SQL Server / Azure SQL |
+| `AvaranFlow.NLog` | `AvaranFlow.NLog.dll` | `net461`, `netstandard2.0` | NLog 4.7.15+ integrations |
 
 ---
 
@@ -134,13 +134,13 @@ dotnet add package AvaranFlow.NLog --version 1.0.0
 Configure AvaranFlow once at application startup:
 
 ```csharp
-using ExceptionMaster.Core;
-using ExceptionMaster.Sinks.Console;
-using ExceptionMaster.Sinks.File;
+using AvaranFlow.Core;
+using AvaranFlow.Sinks.Console;
+using AvaranFlow.Sinks.File;
 using System;
 
 // Configure in-memory buffering, aggregation window, and sinks
-var options = ExceptionMasterOptions.CreateDefault();
+var options = AvaranFlowOptions.CreateDefault();
 options.EnableAsyncDispatch = true;
 options.BufferCapacity = 5000;
 options.OverflowPolicy = QueueOverflowPolicy.DropOldest;
@@ -150,7 +150,7 @@ options.AggregationWindow = TimeSpan.FromMinutes(1);
 options.RegisterSink(new ConsoleSink());
 options.RegisterSink(new FileSink("logs/exceptions.log", maxFileSizeMb: 20));
 
-ExceptionMaster.Core.ExceptionMaster.Configure(options);
+AvaranFlow.Core.ExceptionMaster.Configure(options);
 
 // Capture exceptions anywhere in your application:
 try
@@ -160,19 +160,19 @@ try
 catch (Exception ex)
 {
     // Thread-safe, non-blocking, storm-deduplicated logging
-    ExceptionMaster.Core.ExceptionMaster.Log(ex);
+    AvaranFlow.Core.ExceptionMaster.Log(ex);
 }
 ```
 
 ### 2. Headless Alerting Pipeline with Suppression & Escalation
 
 ```csharp
-using ExceptionMaster.Alerting;
-using ExceptionMaster.Alerting.Configuration;
-using ExceptionMaster.Alerting.Enums;
-using ExceptionMaster.Alerting.Models;
-using ExceptionMaster.Alerting.Rules;
-using ExceptionMaster.Alerting.Suppression;
+using AvaranFlow.Alerting;
+using AvaranFlow.Alerting.Configuration;
+using AvaranFlow.Alerting.Enums;
+using AvaranFlow.Alerting.Models;
+using AvaranFlow.Alerting.Rules;
+using AvaranFlow.Alerting.Suppression;
 using System;
 
 Alerting.Initialize(builder =>

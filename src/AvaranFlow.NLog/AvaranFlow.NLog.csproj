@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <RootNamespace>AvaranFlow.NLog</RootNamespace>
+    <AssemblyName>AvaranFlow.NLog</AssemblyName>
+    <PackageId>AvaranFlow.NLog</PackageId>
+    <Title>AvaranFlow.NLog</Title>
+    <Description>Optional NLog adapter for AvaranFlow without altering host configuration or dependencies.</Description>
+    <PackageTags>avaranflow;exception;logging;nlog;adapter;sink</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.15" />
+  </ItemGroup>
+</Project>

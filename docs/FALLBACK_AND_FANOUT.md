@@ -32,7 +32,7 @@
 
 ### Sink Failure Propagation Contract
 1. **Sinks Must NOT Swallow Unhandled Errors**:
-   Sinks (such as [`SqlServerDatabaseSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.Database/SqlServerDatabaseSink.cs), [`FileSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.File/FileSink.cs), and [`NLogSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/ExceptionMaster.Sinks.NLog/NLogSink.cs)) do not catch and discard write exceptions internally. They throw the underlying I/O or network exception back to `DispatchPipeline`.
+   Sinks (such as [`SqlServerDatabaseSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Sinks.Database/SqlServerDatabaseSink.cs), [`FileSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.Sinks.File/FileSink.cs), and [`NLogSink`](file:///d:/Hitesh/Code%20backups/ExceptionMaster/src/AvaranFlow.NLog/NLogSink.cs)) do not catch and discard write exceptions internally. They throw the underlying I/O or network exception back to `DispatchPipeline`.
 2. **Dispatcher Isolates and Triggers Fallback**:
    `DispatchPipeline.DispatchToSinksAsync` catches exceptions thrown by primary sinks. It records sink failure metrics (`SinkWriteFailures`), activates the configured `FallbackChain`, and proceeds down the cascade.
 3. **Application Host Isolation**:

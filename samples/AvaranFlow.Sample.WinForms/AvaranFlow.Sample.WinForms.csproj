@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>AvaranFlow.Sample.WinForms</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+    <ProjectReference Include="..\..\src\AvaranFlow.Sinks.File\AvaranFlow.Sinks.File.csproj" />
+  </ItemGroup>
+</Project>

@@ -109,13 +109,13 @@ dotnet add package AvaranFlow.Core --version 1.0.0
 dotnet add package AvaranFlow.Alerting.Core --version 1.0.0</code></pre>
 
         <h3>Basic Usage</h3>
-        <pre><code>using ExceptionMaster.Core;
+        <pre><code>using AvaranFlow.Core;
 
 // Configure buffering and sinks at startup
-var options = ExceptionMasterOptions.CreateDefault();
+var options = AvaranFlowOptions.CreateDefault();
 options.EnableAsyncDispatch = true;
 options.BufferCapacity = 5000;
-ExceptionMaster.Core.ExceptionMaster.Configure(options);
+AvaranFlow.Core.ExceptionMaster.Configure(options);
 
 // Capture anywhere safely:
 try
@@ -124,7 +124,7 @@ try
 }
 catch (Exception ex)
 {
-    ExceptionMaster.Core.ExceptionMaster.Log(ex);
+    AvaranFlow.Core.ExceptionMaster.Log(ex);
 }</code></pre>
       </section>
     </main>

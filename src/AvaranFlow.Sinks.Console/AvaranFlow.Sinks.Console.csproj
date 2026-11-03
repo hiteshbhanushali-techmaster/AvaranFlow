@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <RootNamespace>AvaranFlow.Sinks.Console</RootNamespace>
+    <AssemblyName>AvaranFlow.Sinks.Console</AssemblyName>
+    <PackageId>AvaranFlow.Sinks.Console</PackageId>
+    <Title>AvaranFlow.Sinks.Console</Title>
+    <Description>Safe, failure-contained console sink for AvaranFlow with colorized formatting.</Description>
+    <PackageTags>avaranflow;exception;logging;console;sink</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AvaranFlow.Core\AvaranFlow.Core.csproj" />
+  </ItemGroup>
+</Project>

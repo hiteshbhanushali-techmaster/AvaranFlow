@@ -40,15 +40,15 @@ We are committed to providing a welcoming, inclusive, and harassment-free experi
 ### Building the Solution
 ```powershell
 # Restore dependencies
-dotnet restore ExceptionMaster.sln
+dotnet restore AvaranFlow.sln
 
 # Build Release configuration
-dotnet build ExceptionMaster.sln -c Release
+dotnet build AvaranFlow.sln -c Release
 ```
 
 ### Running the Test Suites
 ```powershell
-dotnet test ExceptionMaster.sln -c Release
+dotnet test AvaranFlow.sln -c Release
 ```
 
 ### Running the Benchmark Suite

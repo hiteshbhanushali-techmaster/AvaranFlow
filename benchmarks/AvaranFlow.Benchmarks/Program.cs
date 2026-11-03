@@ -5,13 +5,13 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
-using ExceptionMaster.Core;
-using ExceptionMaster.Alerting;
-using ExceptionMaster.Alerting.Configuration;
-using ExceptionMaster.Alerting.Enums;
-using ExceptionMaster.Alerting.Models;
-using ExceptionMaster.Alerting.Rules;
-using ExceptionMaster.Alerting.Suppression;
+using AvaranFlow.Core;
+using AvaranFlow.Alerting;
+using AvaranFlow.Alerting.Configuration;
+using AvaranFlow.Alerting.Enums;
+using AvaranFlow.Alerting.Models;
+using AvaranFlow.Alerting.Rules;
+using AvaranFlow.Alerting.Suppression;
 
 namespace AvaranFlow.Benchmarks
 {
@@ -77,7 +77,7 @@ namespace AvaranFlow.Benchmarks
             _sampleException = new InvalidOperationException("Simulated trading engine execution breach.");
 
             // Initialize ExceptionMaster Core
-            ExceptionMaster.Core.ExceptionMaster.Configure(cfg =>
+            AvaranFlow.Core.ExceptionMaster.Configure(cfg =>
             {
                 cfg.EnableAsyncDispatch = true;
                 cfg.BufferCapacity = 10000;
@@ -140,7 +140,7 @@ namespace AvaranFlow.Benchmarks
         [Benchmark]
         public void Log_Repeated_Exception_CAS()
         {
-            ExceptionMaster.Core.ExceptionMaster.Log(_sampleException);
+            AvaranFlow.Core.ExceptionMaster.Log(_sampleException);
         }
 
         [Benchmark]

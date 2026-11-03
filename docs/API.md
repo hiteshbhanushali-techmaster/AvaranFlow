@@ -2,12 +2,12 @@
 
 ## 1. Primary Entry Point: `ExceptionMaster`
 
-Located in namespace `ExceptionMaster.Core`.
+Located in namespace `AvaranFlow.Core`.
 
 ### Static Methods
 
 ```csharp
-namespace ExceptionMaster.Core
+namespace AvaranFlow.Core
 {
     public static class ExceptionMaster
     {
@@ -25,13 +25,13 @@ namespace ExceptionMaster.Core
             [CallerMemberName] string caller = null);
 
         // Configuration and lifecycle
-        public static void Configure(Action<ExceptionMasterOptions> configure);
+        public static void Configure(Action<AvaranFlowOptions> configure);
         public static void ConfigureDefaults();
         public static void Flush(TimeSpan? timeout = null);
         public static void Shutdown(TimeSpan? timeout = null);
 
         // Health counters and telemetry
-        public static ExceptionMasterHealth GetHealth();
+        public static AvaranFlowHealth GetHealth();
 
         // Fire-and-forget notification event
         public static event Action<ExceptionContext> ExceptionRaised;
@@ -45,7 +45,7 @@ namespace ExceptionMaster.Core
    - Never throws exceptions back to caller.
    - If `exception` is null, safely ignored.
    - Snapshots all diagnostic metadata at capture time.
-2. **`Configure(Action<ExceptionMasterOptions>)`**:
+2. **`Configure(Action<AvaranFlowOptions>)`**:
    - Thread-safe configuration update.
    - Flushes existing pipeline before swapping active configuration snapshot.
    - Preserves running logger operation during reconfiguration.
@@ -58,12 +58,12 @@ namespace ExceptionMaster.Core
 
 ---
 
-## 2. Configuration Options: `ExceptionMasterOptions`
+## 2. Configuration Options: `AvaranFlowOptions`
 
 ```csharp
-namespace ExceptionMaster.Core
+namespace AvaranFlow.Core
 {
-    public sealed class ExceptionMasterOptions
+    public sealed class AvaranFlowOptions
     {
         // Core behavioral switches
         public bool EnableAggregation { get; set; } = true;
@@ -103,7 +103,7 @@ namespace ExceptionMaster.Core
 ## 3. Sink Interfaces: `IExceptionSink` & `FallbackChain`
 
 ```csharp
-namespace ExceptionMaster.Core
+namespace AvaranFlow.Core
 {
     public interface IExceptionSink : IDisposable
     {
@@ -123,12 +123,12 @@ namespace ExceptionMaster.Core
 
 ---
 
-## 4. Diagnostics & Health: `ExceptionMasterHealth`
+## 4. Diagnostics & Health: `AvaranFlowHealth`
 
 ```csharp
-namespace ExceptionMaster.Core
+namespace AvaranFlow.Core
 {
-    public sealed class ExceptionMasterHealth
+    public sealed class AvaranFlowHealth
     {
         public long TotalLogged { get; }
         public long TotalAggregated { get; }
