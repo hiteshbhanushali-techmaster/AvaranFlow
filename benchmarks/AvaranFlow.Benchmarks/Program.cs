@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
@@ -67,6 +68,8 @@ namespace AvaranFlow.Benchmarks
         private Exception _sampleException;
         private AlertEnvelope _sampleEnvelope;
         private AlertRule _sampleRule;
+        private RuleEngine _ruleEngine;
+        private RuleEvaluationContext _evaluationContext;
 
         [GlobalSetup]
         public void GlobalSetup()
@@ -74,27 +77,34 @@ namespace AvaranFlow.Benchmarks
             _sampleException = new InvalidOperationException("Simulated trading engine execution breach.");
 
             // Initialize ExceptionMaster Core
-            var options = ExceptionMasterOptions.CreateDefault();
-            options.EnableAsyncDispatch = true;
-            options.BufferCapacity = 10000;
-            ExceptionMaster.Core.ExceptionMaster.Configure(options);
+            ExceptionMaster.Core.ExceptionMaster.Configure(cfg =>
+            {
+                cfg.EnableAsyncDispatch = true;
+                cfg.BufferCapacity = 10000;
+            });
 
             // Setup sample alert envelope
             _sampleEnvelope = new AlertEnvelope(
                 alertId: Guid.NewGuid(),
-                occurrenceId: 1,
+                occurrenceId: Guid.NewGuid(),
                 exceptionKey: "OrderBreach#01",
-                exceptionType: typeof(InvalidOperationException).FullName,
-                source: "ExecutionEngine",
+                exceptionType: typeof(InvalidOperationException).FullName ?? "System.InvalidOperationException",
+                safeMessage: "Order price breached volatility band.",
                 severity: AlertSeverity.Error,
+                category: "Trading",
+                source: "ExecutionEngine",
+                correlationId: "CORR-001",
+                environmentName: "Production",
+                machineName: "SRV-TRD-01",
+                processName: "OrderProcessor",
+                processId: 1042,
                 isFatal: false,
                 count: 1,
                 firstSeenUtc: DateTime.UtcNow,
                 lastSeenUtc: DateTime.UtcNow,
                 generatedUtc: DateTime.UtcNow,
-                safeMessage: "Order price breached volatility band.",
-                sanitizedStackTrace: "at TradeProcessor.Execute() in C:\\src\\TradeProcessor.cs:line 42",
-                customProperties: null);
+                safeMetadata: null,
+                safeStackTrace: "at TradeProcessor.Execute() in C:\\src\\TradeProcessor.cs:line 42");
 
             _sampleRule = new AlertRule(
                 ruleId: "order-breach-rule",
@@ -102,6 +112,29 @@ namespace AvaranFlow.Benchmarks
                 condition: RuleCondition.Severity(PredicateOperator.GreaterThanOrEqual, AlertSeverity.Error),
                 order: 10,
                 targetDestinations: new[] { "NullDestination" });
+
+            _ruleEngine = new RuleEngine(new[] { _sampleRule });
+
+            _evaluationContext = new RuleEvaluationContext(
+                occurrenceId: Guid.NewGuid(),
+                exceptionType: typeof(InvalidOperationException).FullName ?? "System.InvalidOperationException",
+                exceptionKey: "OrderBreach#01",
+                severity: AlertSeverity.Error,
+                category: "Trading",
+                source: "ExecutionEngine",
+                environmentName: "Production",
+                machineName: "SRV-TRD-01",
+                processName: "OrderProcessor",
+                processId: 1042,
+                threadId: 1,
+                appVersion: "1.0.0",
+                isFatal: false,
+                count: 1,
+                firstSeenUtc: DateTime.UtcNow,
+                lastSeenUtc: DateTime.UtcNow,
+                correlationId: "CORR-001",
+                caller: "TradeProcessor.Execute",
+                message: "Order price breached volatility band.");
         }
 
         [Benchmark]
@@ -111,9 +144,9 @@ namespace AvaranFlow.Benchmarks
         }
 
         [Benchmark]
-        public bool Alerting_Rule_Evaluation()
+        public IReadOnlyList<AlertRule> Alerting_Rule_Evaluation()
         {
-            return _sampleRule.Condition.Evaluate(_sampleEnvelope);
+            return _ruleEngine.Evaluate(_evaluationContext);
         }
     }
 }
