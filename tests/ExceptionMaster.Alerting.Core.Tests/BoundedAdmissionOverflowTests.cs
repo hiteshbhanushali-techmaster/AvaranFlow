@@ -95,9 +95,11 @@ namespace ExceptionMaster.Alerting.Core.Tests
             };
 
             // Destination holds execution so queue stays full
+            var enteredDest = new TaskCompletionSource<bool>();
             var blocker = new TaskCompletionSource<bool>();
             var slowDest = new TestDestination("SlowDest", async (env, ct) =>
             {
+                enteredDest.TrySetResult(true);
                 await blocker.Task.ConfigureAwait(false);
                 return Models.AlertDeliveryResult.Succeeded("SlowDest", TimeSpan.Zero);
             });
@@ -107,7 +109,7 @@ namespace ExceptionMaster.Alerting.Core.Tests
             // Fill queue
             // Event 1 dequeued by worker and blocked in destination
             gen.TryAdmit(CreateContext("KEY_1"), Enums.AlertSeverity.Error, out var adm1);
-            Thread.Sleep(50); // allow worker to dequeue event 1
+            Assert.True(enteredDest.Task.Wait(5000), "Worker must dequeue event 1 and enter destination.");
 
             // Event 2 & 3 fill capacity (capacity = 2)
             bool adm2 = gen.TryAdmit(CreateContext("KEY_2"), Enums.AlertSeverity.Error, out _);
@@ -140,9 +142,11 @@ namespace ExceptionMaster.Alerting.Core.Tests
                 WorkerConcurrency = 1
             };
 
+            var enteredDest = new TaskCompletionSource<bool>();
             var blocker = new TaskCompletionSource<bool>();
             var slowDest = new TestDestination("SlowDest", async (env, ct) =>
             {
+                enteredDest.TrySetResult(true);
                 await blocker.Task.ConfigureAwait(false);
                 return Models.AlertDeliveryResult.Succeeded("SlowDest", TimeSpan.Zero);
             });
@@ -151,7 +155,7 @@ namespace ExceptionMaster.Alerting.Core.Tests
 
             // Event 1 in-flight
             gen.TryAdmit(CreateContext("KEY_1"), Enums.AlertSeverity.Error, out _);
-            Thread.Sleep(50);
+            Assert.True(enteredDest.Task.Wait(5000), "Worker must dequeue event 1 and enter destination.");
 
             // Fill queue with 2 & 3
             gen.TryAdmit(CreateContext("KEY_2"), Enums.AlertSeverity.Error, out _);

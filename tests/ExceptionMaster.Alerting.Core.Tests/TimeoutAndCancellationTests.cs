@@ -37,8 +37,8 @@ namespace ExceptionMaster.Alerting.Core.Tests
         [Fact]
         public async Task DestinationTimeout_InFanOut_IsClassifiedAsTimeoutFailure_AndIndependentDestinationsContinue()
         {
-            // Destination 1 times out (delays 500ms, timeout 50ms)
-            var slowDest = TestDestination.CreateTimingOut("SlowDest", TimeSpan.FromMilliseconds(500));
+            // Destination 1 times out (delays 5s, timeout 50ms)
+            var slowDest = TestDestination.CreateTimingOut("SlowDest", TimeSpan.FromSeconds(5));
             // Destination 2 succeeds quickly
             var fastDest = TestDestination.CreateSuccessful("FastDest", TimeSpan.FromMilliseconds(5));
 

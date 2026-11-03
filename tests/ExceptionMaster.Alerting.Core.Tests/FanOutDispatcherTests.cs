@@ -108,8 +108,8 @@ namespace ExceptionMaster.Alerting.Core.Tests
         [Fact]
         public async Task FanOut_EnforcesDestinationTimeout()
         {
-            // Destination takes 500ms, but timeout is 50ms
-            var slowDest = TestDestination.CreateTimingOut("SlowWebhook", TimeSpan.FromMilliseconds(500));
+            // Destination takes 5s, but timeout is 50ms
+            var slowDest = TestDestination.CreateTimingOut("SlowWebhook", TimeSpan.FromSeconds(5));
             var fastDest = TestDestination.CreateSuccessful("FastNotifier", TimeSpan.FromMilliseconds(5));
 
             var registry = new DestinationRegistry(new[] { slowDest, fastDest });
