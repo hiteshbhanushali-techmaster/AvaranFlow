@@ -1,0 +1,35 @@
+name: Build, Test & Pack
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8.0 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ExceptionMaster.sln
+
+      - name: Build solution (Release)
+        run: dotnet build ExceptionMaster.sln --configuration Release --no-restore
+
+      - name: Run automated test suites
+        run: dotnet test ExceptionMaster.sln --configuration Release --no-build --verbosity normal
+
+      - name: Pack NuGet packages
+        run: dotnet pack ExceptionMaster.sln --configuration Release --no-build --output artifacts

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Failure containment, in-memory deduplication, bounded buffering, and policy-driven alerting infrastructure for .NET applications.">
+  <meta name="author" content="Hitesh Bhanushali">
+  <meta name="keywords" content="AvaranFlow, ExceptionMaster, Exception Processing, Alerting, Deduplication, Bounded Queue, Sinks, .NET 8.0, .NET Framework 4.8, C#">
+  <meta name="theme-color" content="#f59e0b">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AvaranFlow — Exception Processing &amp; Alerting Infrastructure">
+  <meta property="og:description" content="Stop exception storms from taking down production databases and logs. In-memory atomic CAS deduplication, bounded buffering, and policy-driven routing.">
+  <meta property="og:image" content="assets/avaranflow-social-preview.png">
+  <meta property="og:url" content="https://hiteshbhanushali-techmaster.github.io/AvaranFlow/">
+  <link rel="canonical" href="https://hiteshbhanushali-techmaster.github.io/AvaranFlow/">
+  <link rel="sitemap" type="application/xml" href="sitemap.xml">
+  <title>AvaranFlow — Exception Processing &amp; Alerting Infrastructure</title>
+  <link rel="icon" type="image/png" sizes="128x128" href="assets/avaranflow-icon-128.png">
+  <link rel="alternate" type="text/plain" href="llms.txt" title="AI-readable project summary">
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a30; --line:#1e293b; --text:#edf4ff; --muted:#94a3b8; --amber:#f59e0b; --teal:#0d9488; --sky:#38bdf8; }
+    * { box-sizing:border-box }
+    body { margin:0; background:radial-gradient(ellipse at 50% -20%,#451a03 0,transparent 55%),var(--bg); color:var(--text); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif }
+    a { color:var(--amber) }
+    .wrap { width:min(1120px,calc(100% - 36px)); margin:auto }
+    header { padding:32px 0 66px; border-bottom:1px solid var(--line) }
+    nav { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:54px }
+    nav img { width:56px; height:56px; object-fit:cover; border-radius:14px }
+    nav strong { margin-left:12px; font-size:1.15rem; letter-spacing:.02em }
+    nav .brand { display:flex; align-items:center; color:var(--text); text-decoration:none }
+    nav .links { display:flex; flex-wrap:wrap; gap:20px }
+    nav .links a { color:var(--muted); text-decoration:none }
+    .eyebrow { color:var(--amber); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem }
+    h1 { max-width:880px; margin:12px 0; font-size:clamp(2.4rem,6vw,4.4rem); line-height:1.05; letter-spacing:-.04em }
+    h2 { margin-top:0; font-size:clamp(1.6rem,3vw,2.2rem); line-height:1.2; letter-spacing:-.025em }
+    h3 { margin:.2rem 0 .55rem }
+    .lead { max-width:760px; color:var(--muted); font-size:1.18rem }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px }
+    .button { display:inline-block; padding:11px 18px; border:1px solid var(--line); border-radius:9px; text-decoration:none; font-weight:700 }
+    .button.primary { background:linear-gradient(110deg,#f59e0b,#d97706); border:0; color:#081126 }
+    main section { padding:56px 0; border-bottom:1px solid var(--line) }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px }
+    .card { padding:22px; background:linear-gradient(145deg,rgba(18,26,48,.95),rgba(15,23,42,.92)); border:1px solid var(--line); border-radius:14px }
+    .card p,.muted { color:var(--muted) }
+    .metric { color:var(--amber); font-size:1.85rem; font-weight:800; letter-spacing:-.03em }
+    pre { overflow:auto; padding:20px; background:#080d19; border:1px solid var(--line); border-radius:12px; color:#d9e9ff }
+    footer { padding:28px 0 42px; color:var(--muted); font-size:.92rem }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <nav>
+        <a class="brand" href="index.html">
+          <img src="assets/avaranflow-icon-128.png" alt="AvaranFlow Logo">
+          <strong>AvaranFlow</strong>
+        </a>
+        <div class="links">
+          <a href="features.html">Features</a>
+          <a href="questions.html">FAQ</a>
+          <a href="https://github.com/hiteshbhanushali-techmaster/AvaranFlow">GitHub</a>
+          <a href="https://www.nuget.org/packages/AvaranFlow.Core/">NuGet</a>
+        </div>
+      </nav>
+
+      <span class="eyebrow">Enterprise Exception Processing &amp; Alerting</span>
+      <h1>In-Process Failure Containment &amp; Storm Deduplication</h1>
+      <p class="lead">Absorb cascading exception storms in bounded queues, deduplicate duplicate errors in-memory with atomic CAS, and evaluate deterministic alerting policies before downstream storage saturation.</p>
+
+      <div class="actions">
+        <a class="button primary" href="#quick-start">Get Started</a>
+        <a class="button" href="https://github.com/hiteshbhanushali-techmaster/AvaranFlow">View on GitHub</a>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>Architectural Highlights</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="metric">1.24 µs</div>
+            <h3>CAS Storm Deduplication</h3>
+            <p>Repeating exceptions update atomic counters in 1.24 microseconds with 0 B allocations.</p>
+          </div>
+          <div class="card">
+            <div class="metric">Bounded Queue</div>
+            <h3>Memory Protection</h3>
+            <p>Never crash with OutOfMemory. Configurable DropOldest, DropNewest, and BlockWithTimeout policies.</p>
+          </div>
+          <div class="card">
+            <div class="metric">Policy Alerting</div>
+            <h3>Headless Engine</h3>
+            <p>Ascending-order rules, dynamic severity resolution, sliding-window suppression, and escalation.</p>
+          </div>
+          <div class="card">
+            <div class="metric">Zero Crash</div>
+            <h3>Failure Containment</h3>
+            <p>Sink errors and rule evaluation exceptions are fully contained and never escape into host threads.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="quick-start">
+        <h2>Quick Start Installation</h2>
+        <pre><code># Install Core exception engine:
+dotnet add package AvaranFlow.Core --version 1.0.0
+
+# Optional policy-driven alerting engine:
+dotnet add package AvaranFlow.Alerting.Core --version 1.0.0</code></pre>
+
+        <h3>Basic Usage</h3>
+        <pre><code>using ExceptionMaster.Core;
+
+// Configure buffering and sinks at startup
+var options = ExceptionMasterOptions.CreateDefault();
+options.EnableAsyncDispatch = true;
+options.BufferCapacity = 5000;
+ExceptionMaster.Core.ExceptionMaster.Configure(options);
+
+// Capture anywhere safely:
+try
+{
+    ExecuteCriticalTask();
+}
+catch (Exception ex)
+{
+    ExceptionMaster.Core.ExceptionMaster.Log(ex);
+}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Hitesh Bhanushali. Released under the MIT License.</p>
+    </footer>
+  </div>
+</body>
+</html>

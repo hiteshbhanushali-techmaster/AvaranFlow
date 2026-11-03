@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <RootNamespace>ExceptionMaster.Alerting</RootNamespace>
+    <AssemblyName>ExceptionMaster.Alerting.Core</AssemblyName>
+    <PackageId>AvaranFlow.Alerting.Core</PackageId>
+    <Title>AvaranFlow.Alerting.Core</Title>
+    <Description>Policy-driven routing, dynamic severity resolution, suppression, escalation, and destination fan-out infrastructure for AvaranFlow.</Description>
+    <PackageTags>avaranflow;exceptionmaster;alerting;routing;notifications;resilience;fanout;escalation;suppression</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExceptionMaster.Core\ExceptionMaster.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ExceptionMaster.Alerting.Core.Tests" />
+    <InternalsVisibleTo Include="ExceptionMaster.Alerting.Routing.Tests" />
+  </ItemGroup>
+</Project>

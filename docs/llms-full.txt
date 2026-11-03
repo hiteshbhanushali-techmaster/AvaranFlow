@@ -1,0 +1,46 @@
+# AvaranFlow — Complete AI Technical Reference
+
+## Identity & Scope
+AvaranFlow (formerly ExceptionMaster) is an enterprise-grade exception processing, deduplication, bounded buffering, and alerting infrastructure library for the .NET runtime ecosystem. It acts as an isolation barrier between high-frequency failure points in application code and external logging, persistence, and telemetry sinks.
+
+## Key Subsystems
+
+### 1. Ingestion & Context Enrichment (`AvaranFlow.Core`)
+- Captures `Exception` instances via `ExceptionMaster.Log(ex)`.
+- Enriches failure context: Machine name, Process ID/Name, Thread ID, Timestamp UTC, Stack trace sanitizer, AppDomain/Host environment.
+- Computes deterministic signature keys for exception deduplication.
+
+### 2. Lock-Free Atomic Aggregation & Storm Control
+- Uses interlocked Compare-And-Swap (CAS) state machines in `ExceptionAggregator`.
+- When an identical exception occurs within the active aggregation window (e.g. 60 seconds), its occurrence count is incremented atomically without allocating new memory objects or acquiring heavy locks.
+- Latency per repeated failure: ~1.2 µs with zero heap allocation.
+
+### 3. Bounded Queue & Overflow Policies
+- Absorbs traffic spikes in a memory-bounded dispatch buffer (`BufferCapacity`).
+- Supported overflow policies:
+  - `DropOldest`: Drops the oldest unhandled exception item to accommodate newer events.
+  - `DropNewest`: Rejects the incoming item when full, preserving previously buffered failures.
+  - `BlockWithTimeout`: Temporarily blocks caller thread up to a configurable duration before dropping.
+- Guarantees zero out-of-memory crashes due to unchecked queue growth during cascade failures.
+
+### 4. Sink Fan-Out & Fallback Cascades
+- Coordinates dispatch to multiple registered sinks (`Console`, `RollingFile`, `Database`, `NLog`).
+- Automatic fallback: If a primary sink fails (e.g., SQL server timeout or disk lock), the item is redirected to a designated fallback sink (e.g., local disk or console).
+- Complete failure isolation: Exceptions thrown inside sinks are caught and contained; they never bubble up to application execution threads.
+
+### 5. Policy Engine & Routing (`AvaranFlow.Alerting.Core`)
+- Headless, UI-agnostic alerting pipeline.
+- Dynamic severity resolution: `Warning`, `Error`, `Critical`.
+- Deterministic rule engine evaluating conditions (e.g., `Severity >= Critical`, `ExceptionType == TimeoutException`).
+- Rule-scoped suppression policies (cooldowns, sliding rate-limit windows) to prevent alert fatigue.
+- Escalation thresholds: Promotes alert severity when failure rates exceed thresholds within a window.
+- Produces immutable, sanitized `AlertEnvelope` objects for presentation adapters (such as SangamLink / SanketDesk).
+
+## Target Frameworks & Build Configuration
+- `AvaranFlow.Core`: `net461`, `netstandard2.0`.
+- `AvaranFlow.Alerting.Core`: `netstandard2.0`, `net8.0`.
+- First-Party Sinks: `net461`, `netstandard2.0`.
+- Deterministic builds with SourceLink and embedded XML documentation symbols (`.snupkg`).
+
+## License
+MIT License. Copyright (c) 2026 Hitesh Bhanushali.

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AvaranFlow Features — In-Process Exception Processing &amp; Alerting</title>
+  <link rel="icon" type="image/png" sizes="128x128" href="assets/avaranflow-icon-128.png">
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a30; --line:#1e293b; --text:#edf4ff; --muted:#94a3b8; --amber:#f59e0b; }
+    body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif }
+    .wrap { width:min(1080px,calc(100% - 36px)); margin:auto; padding:40px 0 }
+    a { color:var(--amber) }
+    nav { display:flex; justify-content:space-between; margin-bottom:40px; border-bottom:1px solid var(--line); padding-bottom:20px }
+    .card { padding:24px; background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-bottom:20px }
+    h2 { color:var(--amber); margin-top:0 }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a href="index.html" style="font-weight:700; text-decoration:none; color:#fff">&larr; Back to AvaranFlow</a>
+      <div><a href="questions.html">FAQ</a> | <a href="https://github.com/hiteshbhanushali-techmaster/AvaranFlow">GitHub</a></div>
+    </nav>
+    <h1>AvaranFlow Features</h1>
+    <div class="card">
+      <h2>1. In-Memory Atomic CAS Storm Deduplication</h2>
+      <p>Normalizes exception messages (strips GUIDs, hex IDs, dynamic parameters) and updates in-memory aggregate records via lock-free atomic CAS. Producer threads return in ~1.2 µs without blocking on disk or network writes.</p>
+    </div>
+    <div class="card">
+      <h2>2. Bounded Asynchronous Dispatch Pipeline</h2>
+      <p>Configurable in-memory ring buffer prevents OutOfMemory crashes under massive exception storms. Supports DropOldest, DropNewest, and BlockWithTimeout policies.</p>
+    </div>
+    <div class="card">
+      <h2>3. Policy-Driven Rule Evaluation Engine</h2>
+      <p>Deterministic ascending-order rule evaluation with dynamic severity resolution (Warning, Error, Critical). Sinks and notification destinations receive clean, sanitized AlertEnvelope boundaries.</p>
+    </div>
+    <div class="card">
+      <h2>4. Rule-Scoped Suppression &amp; Escalation</h2>
+      <p>Enforce cooldown durations, sliding time windows, and occurrence rate-limits per rule. Breached thresholds elevate alert severity and dispatch escalation notifications.</p>
+    </div>
+    <div class="card">
+      <h2>5. Multi-Sink Fan-Out &amp; Fallback Cascades</h2>
+      <p>Deliver alerts simultaneously to multiple destinations (Console, File, SQL Server, NLog) or fallback cascades that automatically recover if a primary storage sink fails.</p>
+    </div>
+  </div>
+</body>
+</html>

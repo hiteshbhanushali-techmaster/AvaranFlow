@@ -1,0 +1,50 @@
+name: Build and publish NuGet package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: windows-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ExceptionMaster.sln
+
+      - name: Run tests
+        run: dotnet test ExceptionMaster.sln --configuration Release --no-restore
+
+      - name: Build NuGet packages
+        run: dotnet pack ExceptionMaster.sln --configuration Release --no-restore --output artifacts
+
+      - name: Exchange GitHub OIDC token for NuGet key
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: HiteshBhanushali-Techmaster
+
+      - name: Publish packages
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push "artifacts/AvaranFlow.*.nupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+
+      - name: Publish symbols
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push "artifacts/AvaranFlow.*.snupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json

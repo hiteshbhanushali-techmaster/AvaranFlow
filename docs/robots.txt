@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hiteshbhanushali-techmaster.github.io/AvaranFlow/sitemap.xml

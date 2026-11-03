@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <RootNamespace>ExceptionMaster.Core</RootNamespace>
+    <AssemblyName>ExceptionMaster.Core</AssemblyName>
+    <PackageId>AvaranFlow.Core</PackageId>
+    <Title>AvaranFlow.Core</Title>
+    <Description>Failure-contained exception logging, deduplication, aggregation, and bounded asynchronous buffering framework for .NET.</Description>
+    <PackageTags>avaranflow;exceptionmaster;exception;logging;aggregation;deduplication;resilience;netframework</PackageTags>
+  </PropertyGroup>
+</Project>
